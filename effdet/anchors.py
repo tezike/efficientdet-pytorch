@@ -167,7 +167,8 @@ def clip_boxes_xyxy(boxes: torch.Tensor, size: torch.Tensor):
 
 
 def generate_detections(
-        cls_outputs, box_outputs, anchor_boxes, indices, classes, img_scale, img_size,
+        cls_outputs, box_outputs, anchor_boxes, indices, classes, 
+#     img_scale, img_size, [EDIT: Not needed for wheat detection kaggle]
         max_det_per_image: int = MAX_DETECTIONS_PER_IMAGE):
     """Generates detections with RetinaNet model outputs and anchors.
 
@@ -202,7 +203,7 @@ def generate_detections(
 
     # apply bounding box regression to anchors
     boxes = decode_box_outputs(box_outputs.float(), anchor_boxes, output_xyxy=True)
-    boxes = clip_boxes_xyxy(boxes, img_size / img_scale)  # clip before NMS better?
+#     boxes = clip_boxes_xyxy(boxes, img_size / img_scale)  # clip before NMS better? [EDIT: Not needed for wheat detection kaggle]
 
     scores = cls_outputs.sigmoid().squeeze(1).float()
     top_detection_idx = batched_nms(boxes, scores, classes, iou_threshold=0.5)
@@ -216,7 +217,7 @@ def generate_detections(
     # xyxy to xywh & rescale to original image
     boxes[:, 2] -= boxes[:, 0]
     boxes[:, 3] -= boxes[:, 1]
-    boxes *= img_scale
+#     boxes *= img_scale  [EDIT: Not needed for wheat detection kaggle]
 
     classes += 1  # back to class idx with background class = 0
 
