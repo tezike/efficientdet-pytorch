@@ -34,11 +34,12 @@ def _post_process(config, cls_outputs, box_outputs):
         for level in range(config.num_levels)], 1)
 
     _, cls_topk_indices_all = torch.topk(cls_outputs_all.reshape(batch_size, -1), dim=1, k=MAX_DETECTION_POINTS)
-    indices_all = cls_topk_indices_all.true_divide(config.num_classes)
+#     indices_all = cls_topk_indices_all.true_divide(config.num_classes)
+    indices_all = cls_topk_indices_all // config.num_classes
     classes_all = cls_topk_indices_all % config.num_classes
 
     box_outputs_all_after_topk = torch.gather(
-        box_outputs_all, 1, indices_all.unsqueeze(2).expand(-1, -1, 4))
+        box_outputs_all, 1, indices_all.int().unsqueeze(2).expand(-1, -1, 4))
 
     cls_outputs_all_after_topk = torch.gather(
         cls_outputs_all, 1, indices_all.unsqueeze(2).expand(-1, -1, config.num_classes))
