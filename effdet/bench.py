@@ -40,7 +40,8 @@ def _post_process(config, cls_outputs, box_outputs):
 
     box_outputs_all_after_topk = torch.gather(
 #         box_outputs_all, 1, indices_all.int().unsqueeze(2).expand(-1, -1, 4))
-        box_outputs_all, 1, torch.tensor(indices_all.cpu().numpy(), dtype=torch.int64).unsqueeze(2).expand(-1, -1, 4))
+        box_outputs_all, 1, 
+        torch.tensor(indices_all.cpu().numpy(), dtype=torch.int64).to(box_outputs_all.device).unsqueeze(2).expand(-1, -1, 4))
 
     cls_outputs_all_after_topk = torch.gather(
         cls_outputs_all, 1, indices_all.unsqueeze(2).expand(-1, -1, config.num_classes))
